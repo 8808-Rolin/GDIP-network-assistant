@@ -39,7 +39,6 @@ def configWindow(root, text, type=0):
     quitBtn = Button(master=cw, height=2, width=15,
                      text='退出', command=cw.destroy)
     ipBtn = Button(cw, height=1, width=7, text="获取IP")
-    autorunButton = Button(master=cw, height=1, width=15, text="添加到 开机自启")
 
     accLable.place(x=30, y=30)
     pwdLable.place(x=30, y=90)
@@ -52,7 +51,6 @@ def configWindow(root, text, type=0):
     saveBtn.place(x=35, y=310)
     quitBtn.place(x=160, y=310)
     ipBtn.place(x=220, y=225)
-    autorunButton.place(x=100, y=268)
 
     accText.insert(0, config.get("user", "account"))
     pwdText.insert(0, config.get('user', 'password'))
@@ -116,44 +114,6 @@ def configWindow(root, text, type=0):
     saveBtn.bind("<Button-1>", save)
     ipBtn.bind("<Button-1>", get_ip)
 
-
-def feedbackWindow(root, text):
-    fbw = Toplevel(root)
-    fbw.grab_set()
-    fbw.geometry('500x300')
-    fbw.title('反馈/建议')
-    fbw.iconbitmap('favicon.ico')
-    fbw.resizable(20, 0)  # 防止用户调整尺寸
-
-    msgText = Text(fbw, bd=1, height=20)
-    sumbit = Button(fbw, height=2, width=10, text="提交", relief=FLAT)
-    msgText.insert(
-        "end", '请在这里输入内容......(由于服务器限制，暂时无法传送图片与附件) 如果附上手机号码，我们将会对你的反馈进行及时回复')
-
-    msgText.pack(side=TOP, fill=X)
-    sumbit.pack(side=BOTTOM, fill=X)
-
-    def sendMsg(self):
-        config = getConfig()
-
-        data = {
-            "ip": get_host_ip(),
-            "account": config.get("user", "account"),
-            "msg": msgText.get(1.0, END),
-            "log": text.get(1.0, END)
-        }
-        resp = requests.post(
-            'http://rolin.icu:22222/api/feedback', data=data, timeout=15)
-        print(resp.text)
-
-        if resp.text == "ok":
-            tkinter.messagebox.showinfo("Success", "发送成功！我们将会尽快解决问题")
-            fbw.destroy()
-        else:
-            tkinter.messagebox.showinfo("失败", "发送失败")
-            fbw.destroy()
-
-    sumbit.bind('<Button-1>', sendMsg)
 
 
 if __name__ == "__main__":

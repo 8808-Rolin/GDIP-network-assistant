@@ -7,16 +7,15 @@ Code-Function-What do you want to do:
 FilePath: \创新创业案例-区块链即时通讯d:\Project\vscode-workspace\python\src\LoginNetwork\release\tkLoginScript.py
 '''
 
-
+import webbrowser
 from time import thread_time_ns
 from tkFunction import *
 from wind import *
 import threading
-#   Main.exe
-# pack 广轻网络助手Verx.x.x.zip
+
 
 flag = True
-version = '3.8.0'
+version = '4.0.0'
 
 root = Tk()
 root.title('广轻网络助手 Ver {}'.format(version))
@@ -28,18 +27,19 @@ root.iconbitmap('favicon.ico')
 info = Text(height=30, width=102, state=DISABLED, bg='black', fg='white')
 configBtn = Button(height=4, width=12, text='设置',
                    command=lambda: configWindow(root, info))
-flushBtn = Button(height=1, width=20, text='退出脚本', command=root.destroy)
+
+exitBtn = Button(height=1, width=20, text='退出脚本', command=root.destroy)
 pingBtn = Button(height=1, width=20, text="检查网络连通性",
                  command=lambda: pingBaidu(info))
 linkBtn = Button(height=1, width=20, text="连接校园网",
                  command=lambda: linkNet(info))
-outBtn = Button(height=1, width=20, text="导出日志文件",
+logBtn = Button(height=1, width=20, text="导出日志文件",
                 command=lambda: exportLog(info))
-feedBtn = Button(height=1, width=20, text="打开IP查询页面",
-                 command=openPage)
-updateBtn = Button(height=1, width=20, text="检查更新",
-                   command=lambda: checkUpdate(version, root))
-statusbar = Label(root, text="校园网助手运行ing......    ver 3.0.0 版本更新内容:没钱续服务器，放弃了自动更新 增添了自动同步IP\t 作者:氯磷Rolin",
+ipBtn = Button(height=1, width=20, text="打开IP查询页面",
+               command=lambda: webbrowser.open_new("http://net.30202.co/"))
+updateBtn = Button(height=1, width=20, text="广轻学校官网",
+                   command=lambda: webbrowser.open_new("https://www.gdqy.edu.cn/"))
+statusbar = Label(root, text="校园网助手运行ing......    ver {} 更新内容:集成了路由模式，优化使用体验\t 作者:氯磷Rolin".format(version),
                   bd=1, relief=SUNKEN, anchor=W)
 
 config = getConfig()
@@ -72,11 +72,10 @@ else:
 configBtn.place(x=600, y=400)
 linkBtn.place(x=24, y=405)
 pingBtn.place(x=224, y=405)
-flushBtn.place(x=424, y=445)
-feedBtn.place(x=24, y=445)
+exitBtn.place(x=424, y=445)
+ipBtn.place(x=24, y=445)
 updateBtn.place(x=224, y=445)
-updateBtn['state'] = DISABLED
-outBtn.place(x=424, y=405)
+logBtn.place(x=424, y=405)
 statusbar.pack(side=BOTTOM, fill=X)
 info.place(x=0, y=0)
 
