@@ -17,7 +17,7 @@ def configWindow(root, text, type=0):
     cw = Toplevel(root)
     cw.grab_set()
     cw.geometry('300x370')
-    cw.iconbitmap('favicon.ico')
+    cw.iconbitmap('./assets/favicon.ico')
     cw.title('Setting')
     cw.resizable(0, 0)  # 防止用户调整尺寸
     accLable = Label(master=cw, width=7, height=1, text="账号：")

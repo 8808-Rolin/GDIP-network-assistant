@@ -1,48 +1,98 @@
-'''
-Description: Rolin's code edit
-Author: Rolin-Code
-Date: 2021-09-18 19:31:08
-LastEditors: Rolin
-Code-Function-What do you want to do: 校园网助手主线程
-'''
 
-import webbrowser
-import utils
-import network
-import wind
-import threading
-import config as c
+#导入包
+from pathlib import Path
 from tkinter import *
 import os
-
+import threading
+import webbrowser
+import config as c
+import network
+import utils
+import wind
 
 flag = True
 
-root = Tk()
-root.title('广轻网络助手 Ver {}'.format(c.VERSION))
-root.geometry('717x510')
-root.resizable(0, 0)  # 防止用户调整尺寸
-root.iconbitmap('favicon.ico')
+# 资源引入
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
 
+# 创建框体
+window = Tk()
+window.title('广轻网络助手 Ver {}'.format(c.VERSION))
+window.geometry("960x586")
+window.configure(bg = "#FAFAFD")
+window.iconbitmap('./assets/favicon.ico')
 
-# 控件绘制
-info = Text(height=30, width=102, state=DISABLED, bg='black', fg='white')
-configBtn = Button(height=4, width=12, text='设置',
-                    command=lambda: wind.configWindow(root, info))
-exitBtn = Button(height=1, width=20, text='退出脚本', command=root.destroy)
-pingBtn = Button(height=1, width=20, text="检查网络连通性",
-                    command=lambda: utils.pingBaidu(info))
-linkBtn = Button(height=1, width=20, text="连接校园网",
-                    command=lambda: network.linkNet(info))
-logBtn = Button(height=1, width=20, text="导出日志文件",
-                    command=lambda: wind.exportLog(info))
-ipBtn = Button(height=1, width=20, text="打开IP查询页面",
-                    command=lambda: webbrowser.open_new(c.SELECT_URL))
-updateBtn = Button(height=1, width=20, text="广轻学校官网",
-                    command=lambda: webbrowser.open_new(c.OFFICIAL_WEB))
-statusbar = Label(root, 
-                    text="校园网助手运行ing......    ver {} 更新内容:集成了路由模式，优化使用体验\t 作者:氯磷Rolin".format(c.VERSION),
-                    bd=1, relief=SUNKEN, anchor=W)
+# 背景框体绘制
+canvas = Canvas(window,bg = "#FAFAFD",height = 586,width = 960,bd = 0,highlightthickness = 0,relief = "ridge")
+canvas.place(x = 0, y = 0)
+
+# 日志框绘制
+info = Text(bd=0,bg="#002038",highlightthickness=0,fg='white',state=DISABLED)
+info.place(x=26.0,y=100.0,width=648.0,height=439.0)
+
+#顶部图片
+topBar_image = PhotoImage(file=relative_to_assets("image_1.png"))
+topBar = canvas.create_image(480.0,32.0,image=topBar_image)
+
+# 提示文字
+canvas.create_text(45.0,81.0,anchor="nw",text="校园网连接日志",fill="#000000",font=("Roboto", 12 * -1))
+
+# 连接校园网
+link_image = PhotoImage(file=relative_to_assets("button_1.png"))
+link = Button(image=link_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: network.linkNet(info))
+link.place(x=700.0,y=262.0,width=240.0,height=40.0)
+
+# 打开IP查询页面
+ip_image = PhotoImage(file=relative_to_assets("button_2.png"))
+ipBtn = Button(image=ip_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: webbrowser.open_new(c.SELECT_URL))
+ipBtn.place(x=700.0,y=321.0,width=240.0,height=40.0)
+
+# 设置按钮
+setting_image = PhotoImage(file=relative_to_assets("button_3.png"))
+settingBtn = Button(image=setting_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: wind.configWindow(window, info))
+settingBtn.place(x=700.0,y=500.0,width=240.0,height=40.0)
+
+# 检查网络连通性按钮
+ping_image = PhotoImage(file=relative_to_assets("button_4.png"))
+pingBtn = Button(image=ping_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: utils.pingBaidu(info))
+pingBtn.place(x=700.0,y=381.0,width=110.0,height=40.0)
+
+# 打开广轻官网
+web_image = PhotoImage(file=relative_to_assets("button_5.png"))
+webBtn = Button(image=web_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: webbrowser.open_new(c.OFFICIAL_WEB))
+webBtn.place(x=830.0,y=381.0,width=110.0,height=40.0)
+
+# 导出日志按钮
+log_image = PhotoImage(file=relative_to_assets("button_6.png"))
+logBtn = Button(image=log_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: utils.exportLog(info))
+logBtn.place(x=700.0,y=441.0,width=110.0,height=40.0)
+
+# 退出按钮
+exit_image = PhotoImage(file=relative_to_assets("button_7.png"))
+exitBtn = Button(image=exit_image,borderwidth=0,highlightthickness=0,relief="flat",
+        command=window.destroy)
+exitBtn.place(x=830.0,y=441.0,width=110.0,height=40.0)
+
+# 展示图片位置
+image_image_2 = PhotoImage(file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(820.0,165.0,image=image_image_2)
+
+# 底部状态栏
+statusbar = Label(window, 
+        text="校园网助手运行ing......    ver {} 更新内容:集成了路由模式，重构软件UI \t 作者:氯磷Rolin".format(c.VERSION),
+        bd=1, relief=SUNKEN, anchor=W)
+statusbar.pack(side=BOTTOM, fill=X)
+
+# ----业务代码----
 
 # 获取配置文件
 config = utils.getConfig()
@@ -58,23 +108,10 @@ if list == []:
     if not os.path.exists("config"):
         os.mkdir("config")
     config.write(open("config\\config.ini", "w"))
-    wind.configWindow(root, info, type=1)
-
-
-# 控件位置
-configBtn.place(x=600, y=400)
-linkBtn.place(x=24, y=405)
-pingBtn.place(x=224, y=405)
-exitBtn.place(x=424, y=445)
-ipBtn.place(x=24, y=445)
-updateBtn.place(x=224, y=445)
-logBtn.place(x=424, y=405)
-statusbar.pack(side=BOTTOM, fill=X)
-info.place(x=0, y=0)
+    wind.configWindow(window, info, type=1)
 
 # 控件绑定
 statusbar.bind("<Button-1>", utils.statusBarCallback)
-
 
 # 脚本运行线程
 t1 = threading.Thread(target=network.scriptRun, args=(info, statusbar,))
@@ -85,4 +122,5 @@ if __name__ == '__main__' and flag:
     t1.start()
 
 # 线程常驻
-root.mainloop()
+window.resizable(False, False)
+window.mainloop()
