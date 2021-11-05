@@ -67,7 +67,7 @@ def get_true_ip(text):
 
 # 连通性测试
 def pingBaidu(text):
-    r = run('ping www.baidu.com',
+    r = run('ping 114.114.114.114',
             stdout=PIPE,
             stderr=PIPE,
             stdin=PIPE,

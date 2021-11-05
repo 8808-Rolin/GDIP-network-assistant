@@ -8,6 +8,20 @@
 ## Gdipcna
 # GDIP Campus Network Assistant
 
+<p align="center">
+  <h1 align="center" style="margin: 0 auto 0 auto;">广轻校园网助手</h1>
+  <h5 align="center" style="margin: 0 auto 0 auto;">GDIP Campus Network Assistant</h5>
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/github/last-commit/8808-Rolin/GDIP-network-assistant">
+    <img src="https://img.shields.io/github/contributors/8808-Rolin/GDIP-network-assistant">
+    <img src="https://img.shields.io/github/issues/8808-Rolin/GDIP-network-assistant?label=issues">
+    <img src="https://img.shields.io/github/stars/8808-Rolin/GDIP-network-assistant">
+  </p>
+
+  <br>
+
 - [GDIP Campus Network Assistant](#gdip-campus-network-assistant)
 - [Developers Information](#developers-information)
 - [Update-History](#update-history)
@@ -15,9 +29,10 @@
   - [Version 2.0](#version-20)
   - [Version 3.0](#version-30)
   - [Version 4.0](#version-40)
-- [Overview](#overview)
 - [Usage](#usage)
-- [Code-Format](#code-format)
+  - [具体使用方法](#具体使用方法)
+  - [加入开机自启动](#加入开机自启动)
+- [Code-Usage](#code-usage)
 
 # Developers Information
 [Developer's Bilibili](https://space.bilibili.com/23161464)
@@ -50,14 +65,29 @@ Proposer:
 - Ver 3.7 财力不足，放弃了自动更新模块（实在没钱续费啦）
 - Ver 3.8 提高稳定性，修复更多异常，就是机房暂时炸了也不影响软件正常使用
 ## Version 4.0 
-- 开发中
-- TODO：路由模式下更加好用，重构代码
-- FINISH:
-  - 完成了在多种网络环境下获取校园网IP
-  - 完成了校园网进行DNS劫持导致软件不能正常运行的bug 
-  - 修复了各种情况下无法自动重连的bug
-  - 优化日志系统
-  - 在联网时使用该脚本，将自动获取学号
-# Overview
+- Ver 4.0 船新改版上线
+  - 新增 集成路由模式，跨路由也可以使用该助手维持在线状态
+  - 新增 用户IP实时上传云端，随时可以通过Web查找当前IP
+  - 优化 重构界面UI，二刺螈气息UP UP UP，阿门
+  - 优化 重构代码结构，优化逻辑处理 提高程序运行效率
+  - 优化 日志系统，现在日志有时间了，能够更加快速的定位BUG
+  - 优化 在联网第一次使用该脚本时，能够智能的获取当前学号
+  - 修复 在校园网内使用因为DNS劫持而无法正常工作的BUG
+  - 修复 在机房爆炸的时候会自动结束进程的BUG
+
+
 # Usage
-# Code-Format
+- 使用场景：广东轻工职业技术学院校园网
+- 能且仅能在校园网环境下正常工作
+## 具体使用方法
+- 第一次使用时需要设置校园网账号密码，随后该账号密码会被记录，以后再打开软件将会自动读取配置文件进行登录
+- 请务必确保账号密码的正确性
+- 该软件完成了掉线自动登录功能，7x24小时无人值守
+- 加入自启动后能实现开机即连功能，开机即连
+## 加入开机自启动
+1. Win+R 打开运行窗口
+2. 输入 `shell:startup` 打开启动项文件资源管理器
+3. 将本软件的**快捷方式**复制到文件夹下即可
+# Code-Usage
+- pyinstaller编译教程：
+编译命令：pyinstaller -F -w -i ./assets/favicon.ico main.py -p wind.py -p utils.py -p network.py -p config.py --add-data ".\\assets\\*;.\\assets"
