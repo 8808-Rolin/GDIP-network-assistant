@@ -3,19 +3,16 @@ Description: Rolin's code edit
 Author: Rolin-Code
 Date: 2021-09-18 19:31:08
 LastEditors: Rolin
-Code-Function-What do you want to do: 
-FilePath: \创新创业案例-区块链即时通讯d:\Project\vscode-workspace\python\src\LoginNetwork\release\tkLoginScript.py
+Code-Function-What do you want to do: 校园网助手主线程
 '''
 
 import webbrowser
-from time import thread_time_ns
 import utils
 import network
 import wind
 import threading
 import config as c
 from tkinter import *
-import configparser
 import os
 
 

@@ -3,7 +3,7 @@ Description: Rolin's code edit
 Author: Rolin-Code
 Date: 2021-11-05 01:02:07
 LastEditors: Rolin
-Code-Function-What do you want to do: 
+Code-Function-What do you want to do: 网络相关方法
 '''
 
 import utils
@@ -90,17 +90,18 @@ def scriptRun(text,sb):
     testnum = 0 
         # 判断当前是否网络正常
     while True:
-        r = run('ping www.baidu.com',
+        r = run('ping 114.114.114.114',
                 stdout=PIPE,
                 stderr=PIPE,
                 stdin=PIPE,
                 shell=True)
+                
         # 没有网络时
         if r.returncode:
             sb['bg'] = "red"
-            localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
             utils.addText(
-                text, '校园网已断开，正在重连 第{0}次 当前时间：{1}'.format(cnt, localtime))
+                text, '校园网已断开，正在重连 第{0}次'.format(cnt))
 
             config.read('config\\config.ini', encoding='UTF-8')
             account = config.get('user', 'account')

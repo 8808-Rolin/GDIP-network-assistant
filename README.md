@@ -52,6 +52,11 @@ Proposer:
 ## Version 4.0 
 - 开发中
 - TODO：路由模式下更加好用，重构代码
+- FINISH:
+  - 完成了在多种网络环境下获取校园网IP
+  - 完成了校园网进行DNS劫持导致软件不能正常运行的bug 
+  - 修复了各种情况下无法自动重连的bug
+  - 优化日志系统
 # Overview
 # Usage
 # Code-Format

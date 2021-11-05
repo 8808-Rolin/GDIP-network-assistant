@@ -3,7 +3,7 @@ Description: Rolin's code edit
 Author: Rolin-Code
 Date: 2021-11-05 01:01:57
 LastEditors: Rolin
-Code-Function-What do you want to do: 
+Code-Function-What do you want to do: 工具方法
 '''
 import webbrowser
 import config
@@ -18,7 +18,8 @@ import configparser
 
 # 打印数据
 def addText(text, str):
-    str = str + "\n"
+    localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    str = localtime+"->"+str + "\n"
     text.configure(state='normal')
     text.insert(END, str)
     text.configure(state='disabled')
@@ -30,11 +31,11 @@ def get_ip(text):
         resp = requests.get(config.IP_URL, timeout=10)
         addText(text, "获取IP中>>>  请求响应码：{}".format(resp.status_code))
     except:
-        addText(text, "获取IP失败，请检查你的网络")
+        addText(text, "网络错误，获取IP失败，请检查你的网络")
         return ""
 
     if resp.status_code != 200 :
-        addText(text, "获取IP失败，请检查你的网络")
+        addText(text, "请求错误，获取IP失败，请检查你的网络")
         return ""
     try:
         #处理响应结果
@@ -43,14 +44,14 @@ def get_ip(text):
         result = result[0]
         res = json.loads(result)
         
-        if res['result'] == 1:
+        if "v46ip" in result:
             addText(text, "获取IP成功，你当前的IP为：{}".format(res['v46ip']))
             return res['v46ip']
         else:
-            addText(text, "获取IP失败，请检查你的网络")
+            addText(text, "响应错误，获取IP失败，请检查你的网络")
             return ""
     except:
-        addText(text, "获取IP失败，请检查你的网络")
+        addText(text, "后台错误，获取IP失败，请检查你的网络")
         return ""
     
 
