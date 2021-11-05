@@ -57,6 +57,7 @@ Proposer:
   - 完成了校园网进行DNS劫持导致软件不能正常运行的bug 
   - 修复了各种情况下无法自动重连的bug
   - 优化日志系统
+  - 在联网时使用该脚本，将自动获取学号
 # Overview
 # Usage
 # Code-Format

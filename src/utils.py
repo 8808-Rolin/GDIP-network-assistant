@@ -120,3 +120,29 @@ def getConfig():
     cf = configparser.ConfigParser()
     cf.read('config\\config.ini', encoding='UTF-8')
     return cf
+
+def get_account(text):
+    try:
+        resp = requests.get(config.IP_URL, timeout=10)
+        addText(text, "尝试获取账号中>>>  请求响应码：{}".format(resp.status_code))
+    except:
+        addText(text, "获取学号失败，请在设置中填写学号。")
+        return ""
+
+    if resp.status_code != 200 :
+        addText(text, "请求错误，获取学号失败，请检查你的网络")
+        return ""
+    try:
+        #处理响应结果
+        result = resp.text.split('(')
+        result = result[1].split(")")
+        result = result[0]
+        res = json.loads(result)
+        
+        if "uid" in result:
+            addText(text, "获取学号成功，你当前的学号为：{}".format(res['uid']))
+            return res['uid']
+        else:
+            return ""
+    except:
+        return ""

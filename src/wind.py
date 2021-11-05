@@ -20,7 +20,7 @@ OUTPUT_PATH = None
 ASSETS_PATH = None
 
 
-def configWindow(root,text,type = 0):
+def configWindow(root,text):
     global image_image_1
     global entry_image_1
     global entry_image_2
@@ -36,13 +36,12 @@ def configWindow(root,text,type = 0):
     def relative_to_assets(path: str) -> Path:
         return ASSETS_PATH / Path(path)
 
-
     # 获取配置文件
     config = utils.getConfig()
     cw = Toplevel(root)
     cw.geometry("280x403")
     cw.configure(bg = "#FFFFFF")
-    cw.iconbitmap('./assets/favicon.ico')
+    cw.iconbitmap(relative_to_assets('favicon.ico'))
     cw.title('Setting')
     cw.resizable(0, 0)
 
@@ -113,6 +112,7 @@ def configWindow(root,text,type = 0):
             tkinter.messagebox.showinfo("Failure", "保存设置失败，请重试")
     
     saveBtn.bind("<Button-1>", save)
+    
 
 
 

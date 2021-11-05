@@ -16,14 +16,14 @@ flag = True
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+        return ASSETS_PATH / Path(path)
 
 # 创建框体
 window = Tk()
 window.title('广轻网络助手 Ver {}'.format(c.VERSION))
 window.geometry("960x586")
 window.configure(bg = "#FAFAFD")
-window.iconbitmap('./assets/favicon.ico')
+window.iconbitmap(relative_to_assets('favicon.ico'))
 
 # 背景框体绘制
 canvas = Canvas(window,bg = "#FAFAFD",height = 586,width = 960,bd = 0,highlightthickness = 0,relief = "ridge")
@@ -100,15 +100,20 @@ list = config.sections()  # 获取到配置文件中所有分组名称
 
 # 取不到配置文件时，先处理硬配置，优先打开子窗口
 if list == []:
-    config.add_section("system")
-    config.set("system", "sleepTime", '12')
-    config.add_section("user")
-    config.set("user", "account", "2019060703300")
-    config.set("user", "password", "0000000000")
-    if not os.path.exists("config"):
-        os.mkdir("config")
-    config.write(open("config\\config.ini", "w"))
-    wind.configWindow(window, info, type=1)
+        config.add_section("system")
+        config.set("system", "sleepTime", '12')
+        config.add_section("user")
+        num = utils.get_account(info)
+        if(num == ''):
+                config.set("user", "account", "2019060703300")
+        else:
+                config.set("user", "account", num)
+        
+        config.set("user", "password", "0000000000")
+        if not os.path.exists("config"):
+                os.mkdir("config")
+        config.write(open("config\\config.ini", "w"))
+        utils.addText(info,"首次使用，请务必打开设置填写账号密码方可使用")
 
 # 控件绑定
 statusbar.bind("<Button-1>", utils.statusBarCallback)
@@ -116,10 +121,10 @@ statusbar.bind("<Button-1>", utils.statusBarCallback)
 # 脚本运行线程
 t1 = threading.Thread(target=network.scriptRun, args=(info, statusbar,))
 if __name__ == '__main__' and flag:
-    stop_threads = False
-    t1.setName('script')
-    t1.setDaemon(True)
-    t1.start()
+        stop_threads = False
+        t1.setName('script')
+        t1.setDaemon(True)
+        t1.start()
 
 # 线程常驻
 window.resizable(False, False)
