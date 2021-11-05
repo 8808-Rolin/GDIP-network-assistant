@@ -8,42 +8,83 @@ Code-Function-What do you want to do: 其他窗口
 from tkinter import *
 import tkinter.messagebox  # 这个是消息框，对话框的关键
 import utils
+from pathlib import Path
+
+image_image_1 = None
+entry_image_1 = None
+entry_image_2 = None
+entry_image_3 = None
+button_image_1 = None
+button_image_2 = None
+OUTPUT_PATH = None
+ASSETS_PATH = None
 
 
-def configWindow(root, text, type=0):
+def configWindow(root,text,type = 0):
+    global image_image_1
+    global entry_image_1
+    global entry_image_2
+    global entry_image_3
+    global button_image_1
+    global button_image_2
+    global OUTPUT_PATH
+    global ASSETS_PATH
+    #读取资源文件
+    OUTPUT_PATH = Path(__file__).parent
+    ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+
+    def relative_to_assets(path: str) -> Path:
+        return ASSETS_PATH / Path(path)
+
+
     # 获取配置文件
     config = utils.getConfig()
-
     cw = Toplevel(root)
-    cw.grab_set()
-    cw.geometry('300x370')
+    cw.geometry("280x403")
+    cw.configure(bg = "#FFFFFF")
     cw.iconbitmap('./assets/favicon.ico')
     cw.title('Setting')
-    cw.resizable(0, 0)  # 防止用户调整尺寸
-    accLable = Label(master=cw, width=7, height=1, text="账号：")
-    pwdLable = Label(master=cw, width=7, height=1, text="密码：")
-    timeLable = Label(master=cw, width=8, height=1, text="等待时间：")
-    ipLable = Label(master=cw, width=21, height=1, text="当前IP：{}".format(utils.get_ip(text)))
+    cw.resizable(0, 0)
 
-    accText = Entry(master=cw, width=20)
-    pwdText = Entry(master=cw, width=20)
-    timeText = Entry(master=cw, width=20)
+    # 控件绘制
+    # 背景绘制
+    canvas = Canvas(bg = "#FFFFFF",height = 403,width = 280,bd = 0,highlightthickness = 0,relief = "ridge",master=cw)
+    canvas.place(x = 0, y = 0)
+    #顶图绘制
+    image_image_1 = PhotoImage(file=relative_to_assets("image_01.png"))
+    image_1 = canvas.create_image(140.0,48.0,image=image_image_1)
+    # 学号输入框绘制
+    entry_image_1 = PhotoImage(file=relative_to_assets("entry_01.png"))
+    entry_bg_1 = canvas.create_image(140.5,150.0,image=entry_image_1)
+    accText = Entry(bd=0,bg="#eff6fb",highlightthickness=0,master=cw)
+    accText.place(x=38.0,y=138.0,width=203.0,height=22.0)
+    # 密码输入框绘制
+    entry_image_2 = PhotoImage(file=relative_to_assets("entry_2.png"))
+    entry_bg_2 = canvas.create_image(141.5,216.0,image=entry_image_2)
+    pwdText = Entry(bd=0,bg="#eff6fb",highlightthickness=0,master=cw)
+    pwdText.place(x=38.0,y=204.0,width=203.0,height=22.0)
+    # 等待时间输入框绘制
+    entry_image_3 = PhotoImage(file=relative_to_assets("entry_3.png"))
+    entry_bg_3 = canvas.create_image(174.0,263.5,image=entry_image_3)
+    timeText = Entry(bd=0,bg="#eff6fb",highlightthickness=0,master=cw)
+    timeText.place(x=100.0,y=252.0,width=150.0,height=21.0)
+    # 文字绘制
+    canvas.create_text(32.0,112.0,anchor="nw",text="学号：",fill="#000000",font=("Roboto", 18 * -1))
+    canvas.create_text(32.0,178.0,anchor="nw",text="密码：",fill="#000000",font=("Roboto", 18 * -1))
+    canvas.create_text(20.0,256.0,anchor="nw",text="重连时间(s)",fill="#000000",font=("Roboto", 14 * -1))
+    canvas.create_text(53.0,294.0,anchor="nw",text="当前IP：{}".format(utils.get_ip(text)),fill="#000000",font=("Roboto", 16 * -1))
+    # 保存按钮绘制
+    button_image_1 = PhotoImage(file=relative_to_assets("button_01.png"))
+    saveBtn = Button(image=button_image_1,borderwidth=0,highlightthickness=0,relief="flat",
+        command=lambda: print("button_1 clicked"),master=cw)
+    saveBtn.place(x=34.0,y=346.0,width=96.0,height=32.0)
+    # 退出按钮绘制
+    button_image_2 = PhotoImage(file=relative_to_assets("button_02.png"))
+    quitBtn = Button(image=button_image_2,borderwidth=0,highlightthickness=0,relief="flat",
+        command=cw.destroy,master=cw)
+    quitBtn.place(x=150.0,y=346.0,width=96.0, height=32.0)
 
-
-    saveBtn = Button(master=cw, height=2, width=15, text='保存')
-    quitBtn = Button(master=cw, height=2, width=15,
-                        text='退出', command=cw.destroy)
-
-    accLable.place(x=30, y=30)
-    pwdLable.place(x=30, y=90)
-    timeLable.place(x=30, y=160)
-    ipLable.place(x=30, y=230)
-    accText.place(x=100, y=30)
-    pwdText.place(x=100, y=90)
-    timeText.place(x=100, y=160)
-    saveBtn.place(x=35, y=310)
-    quitBtn.place(x=160, y=310)
-
+    # 插入数值
     accText.insert(0, config.get("user", "account"))
     pwdText.insert(0, config.get('user', 'password'))
     timeText.insert(0, config.get("system", "sleepTime"))
@@ -70,7 +111,10 @@ def configWindow(root, text, type=0):
         except Exception as e:
             utils.addText(text,str(e))
             tkinter.messagebox.showinfo("Failure", "保存设置失败，请重试")
+    
     saveBtn.bind("<Button-1>", save)
+
+
 
 
 
