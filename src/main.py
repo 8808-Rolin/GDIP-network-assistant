@@ -31,8 +31,10 @@ canvas = Canvas(window,bg = "#FAFAFD",height = 586,width = 960,bd = 0,highlightt
 canvas.place(x = 0, y = 0)
 
 # 日志框绘制
+entryBar_image = PhotoImage(file=relative_to_assets("entry_1.png"))
+entryBar = canvas.create_image(350.0,318.0,image=entryBar_image)
 info = Text(bd=0,bg="#002038",highlightthickness=0,fg='white',state=DISABLED)
-info.place(x=26.0,y=100.0,width=648.0,height=439.0)
+info.place(x=30.0,y=104.0,width=640.0,height=431.0)
 
 #顶部图片
 topBar_image = PhotoImage(file=relative_to_assets("image_1.png"))
