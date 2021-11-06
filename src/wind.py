@@ -9,6 +9,7 @@ from tkinter import *
 import tkinter.messagebox  # 这个是消息框，对话框的关键
 import utils
 from pathlib import Path
+from log import *
 
 image_image_1 = None
 entry_image_1 = None
@@ -21,6 +22,7 @@ ASSETS_PATH = None
 
 
 def configWindow(root,text):
+    logger = log(text)
     global image_image_1
     global entry_image_1
     global entry_image_2
@@ -102,13 +104,14 @@ def configWindow(root,text):
         config.set("user", "password", pwd)
         try:
             config.write(open("config\\config.ini", "r+"))
-            utils.addText(text, "---更新设置成功  当前设置如下---")
-            utils.addText(text, "校园网账号：{}".format(acc))
-            utils.addText(text, "等待重连的时间：{}秒".format(time))
+            logger.info( "---更新设置成功  当前设置如下---")
+            logger.info( "校园网账号：{}".format(acc))
+            logger.debug("校园网密码：{}".format(pwd))
+            logger.info( "等待重连的时间：{}秒".format(time))
             cw.destroy()
             tkinter.messagebox.showinfo("Success", "保存设置成功！")
         except Exception as e:
-            utils.addText(text,str(e))
+            logger.error( str(e))
             tkinter.messagebox.showinfo("Failure", "保存设置失败，请重试")
     
     saveBtn.bind("<Button-1>", save)

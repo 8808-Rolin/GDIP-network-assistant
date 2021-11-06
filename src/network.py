@@ -6,6 +6,7 @@ LastEditors: Rolin
 Code-Function-What do you want to do: 网络相关方法
 '''
 
+from typing import Text
 import utils
 import config as cf
 import time
@@ -14,60 +15,69 @@ import json
 import base64
 import configparser
 from subprocess import PIPE, run
+from log import *
 
 
 
 # 登陆校园网
 def login(account,password,text):
+    logger = log(text)
     #获取ip
     ip = utils.get_true_ip(text)
 
     param = cf.buildParam(account,password,ip)
-    utils.addText(text, "当前校园网账号>>> {}".format(account))
-    utils.addText(text, "当前校园网IP>>> {}".format(ip))
+    logger.info("当前校园网账号>>> {}".format(account))
+    logger.info( "当前校园网IP>>> {}".format(ip))
+    logger.info("当前校园网IP>>> {}".format(ip))
     # 发送请求
-    rq = requests.get(cf.LOGIN_URL, params=param, timeout=10)
-    utils.addText(text, "请求结果>>>  请求响应码：{}".format(rq.status_code))
+    try:
+        rq = requests.get(cf.LOGIN_URL, params=param, timeout=10)
+        logger.info( "请求结果>>>  请求响应码：{}".format(rq.status_code))
+
+        # 处理响应数据
+        result = rq.text.split('(')
+        result = result[1].split(")")
+        result = result[0]
+        res = json.loads(result)
+
+        # 日志打印JSON结果
+        logger.debug(result)
+
+        if("ret_code" in result):
+            ret_code = json.loads(result)["ret_code"]
+        else:
+            ret_code = -1
+
+        # 结果判定
+        if res['result'] == "1":
+            logger.info( ">>>{}".format(res['msg']))
+            return True
+        elif res['result'] == "0" and ret_code == 2:
+            logger.info( ">>>您已经成功登录,无需再次登录")
+            return True
+        elif res['result'] == "0" and ret_code == 1:
+            msg = base64.b64decode(res['msg'].encode()).decode
+            logger.war(">>>{}".format(msg))
+            return False
+        else:
+            msg = res['msg']
+            logger.war( "错误信息>>>{}".format(result))
+            logger.war( ">>>{}".format(msg))
+            return False
+    except Exception as e:
+        log.war("登录错误！，详细信息请查看日志文件")
+        log.error(str(e))
+        return False
+
     
-    if rq.status_code != 200:
-        utils.addText(text, "页面请求出现错误！")
-        return False
-
-    # 处理响应数据
-    result = rq.text.split('(')
-    result = result[1].split(")")
-    result = result[0]
-    res = json.loads(result)
-
-    if("ret_code" in result):
-        ret_code = json.loads(result)["ret_code"]
-    else:
-        ret_code = -1
-    
-
-    # 结果判定
-    if res['result'] == "1":
-        utils.addText(text, ">>>{}".format(res['msg']))
-        return True
-    elif res['result'] == "0" and ret_code == 2:
-        utils.addText(text, ">>>您已经成功登录,无需再次登录")
-        return True
-    elif res['result'] == "0" and ret_code == 1:
-        msg = base64.b64decode(res['msg'].encode()).decode
-        utils.addText(text,">>>{}".format(msg))
-        return False
-    else:
-        msg = res['msg']
-        utils.addText(text, "错误信息>>>{}".format(result))
-        utils.addText(text, ">>>{}".format(msg))
-        return False
 
 
 # 脚本运行
 def scriptRun(text,sb):
-    utils.addText(text, '----脚本开始运行----')
-    utils.addText(
-        text, 'Welcom To Use GDIP Network Assistant Version {}  For Windows'.format(cf.VERSION))
+    logger = log(text)
+    logger.info( '----脚本开始运行----')
+    logger.addText(
+        'Welcom To Use GDIP Network Assistant Version {}  For Windows'.format(cf.VERSION))
 
     # 引入配置文件
     # 实例化configParser对象
@@ -82,8 +92,8 @@ def scriptRun(text,sb):
     sleepTime = eval(config.get('system', 'sleepTime'))  # 睡眠时间
 
     # 提示信息
-    utils.addText(text, "校园网账号：{}".format(account))
-    utils.addText(text, "重连时间：{}秒".format(sleepTime))
+    logger.addText("校园网账号：{}".format(account))
+    logger.addText("重连时间：{}秒".format(sleepTime))
 
     # 连接校园网
     cnt = 1 #重连次数
@@ -100,8 +110,8 @@ def scriptRun(text,sb):
         if r.returncode:
             sb['bg'] = "red"
 
-            utils.addText(
-                text, '校园网已断开，正在重连 第{0}次'.format(cnt))
+            logger.war(
+                '校园网已断开，正在重连 第{0}次'.format(cnt))
 
             config.read('config\\config.ini', encoding='UTF-8')
             account = config.get('user', 'account')
@@ -114,13 +124,14 @@ def scriptRun(text,sb):
                     cnt += 1
                     continue
                 else:
-                    utils.addText(text, "重连错误！！！，将在{}秒后重连".format(sleepTime))
+                    logger.war("重连错误！！！，将在{}秒后重连".format(sleepTime))
                     testnum = 0
                     cnt += 1
                     time.sleep(sleepTime)
                     continue
             except Exception as e:
-                utils.addText(text, "重连错误！！！，将在{}秒后重连".format(sleepTime))
+                logger.war( "重连错误！！！，将在{}秒后重连,详细错误请查看日志".format(sleepTime))
+                logger.error(str(e))
                 time.sleep(sleepTime)
                 testnum = 0
                 cnt += 1
@@ -128,7 +139,7 @@ def scriptRun(text,sb):
         else:
             sb['bg'] = "green"
             if (testnum % 120) == 0:
-                utils.addText(text, '当前网络状态正常')
+                logger.info('当前网络状态正常')
                 # 更新网站上的ip
                 utils.updateIP(account,text)
             testnum += 1

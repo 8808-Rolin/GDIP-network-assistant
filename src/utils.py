@@ -15,84 +15,84 @@ from tkinter import filedialog
 import time
 import uuid
 import configparser
+from log import *
 
-# 打印数据
-def addText(text, str):
-    localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    str = localtime+"->"+str + "\n"
-    text.configure(state='normal')
-    text.insert(END, str)
-    text.configure(state='disabled')
+
 
 
 # 通过校园网获取IP
 def get_ip(text):
+    logger = log(text)
     try:
         requests.adapters.DEFAULT_RETRIES = 5
         resp = requests.get(config.IP_URL, timeout=10)
         resp.keep_alive = False
-        addText(text, "获取IP中>>>  请求响应码：{}".format(resp.status_code))
+        logger.info("获取IP中>>>  请求响应码：{}".format(resp.status_code))
     except Exception as e:
-        addText(text, "获取IP失败，请检查你的网络")
+        logger.war("获取IP失败，请检查你的网络,具体错误请查看日志")
+        logger.error(str(e))
         return ""
 
-    if resp.status_code != 200 :
-        addText(text, "请求错误，获取IP失败，请检查你的网络")
-        return ""
     try:
         #处理响应结果
         result = resp.text.split('(')
         result = result[1].split(")")
         result = result[0]
         res = json.loads(result)
-        
+        logger.debug(result)
+
         if "v46ip" in result:
-            addText(text, "获取IP成功，你当前的IP为：{}".format(res['v46ip']))
+            logger.info("获取IP成功，你当前的IP为：{}".format(res['v46ip']))
             return res['v46ip']
         else:
-            addText(text, "响应错误，获取IP失败，请检查你的网络")
+            logger.war =( "获取IP失败，请检查你的网络")
             return ""
-    except:
-        addText(text, "后台错误，获取IP失败，请检查你的网络")
+    except Exception as e:
+        logger.war("后台错误，获取IP失败，请检查你的网络")
+        logger.error(str(e))
         return ""
     
 
 ## 重复获取IP直至获取成功
 def get_true_ip(text):
+    logger = log(text)
     #获取IP
     while True:
         ip = get_ip(text)
         if ip != "":
             return ip
-        addText(text, "正在重试获取ip地址")
+        logger.info( "正在重试获取ip地址")
         time.sleep(config.GET_IP_WAIT_TIME)
 
 # 连通性测试
 def pingBaidu(text):
+    logger = log(text)
     r = run('ping 114.114.114.114',
             stdout=PIPE,
             stderr=PIPE,
             stdin=PIPE,
             shell=True)
     if r.returncode:
-        addText(text, "连通测试(ping)失败！判断当前网络已断开！")
+        logger.war( "连通测试(ping)失败！判断当前网络已断开！")
     else:
-        addText(text, "连通测试(ping)成功！当前网络正常！")
+        logger.info("连通测试(ping)成功！当前网络正常！")
 
 # 进行一个日志的导
 def exportLog(text):
+    logger = log(text)
     logText = text.get('1.0', END)
     folderPath = filedialog.askdirectory(initialdir="./")
     if folderPath:
         localtime = time.strftime("%Y-%m-%d", time.localtime())
         filePath = "{0}/NetworkLog_{1}-{2}.log".format(
             folderPath, localtime, uuid.uuid1())
-        log = open(filePath, "w")
-        log.write(logText)
-        addText(text, "导出日志文件成功，文件路径：{0}".format(filePath))
-        log.close()
+        loge = open(filePath, "w")
+        loge.write(logText)
+        logger.info("导出日志文件成功，文件路径：{0}".format(filePath))
+        loge.close()
 
 def updateIP(account,text):
+    logger = log(text)
     try:
         ip = get_true_ip(text)
         # 在此处撰写同步更新IP代码
@@ -102,16 +102,19 @@ def updateIP(account,text):
         uri = config.UPDATE_URL.format(
             account, ip)
         res = requests.get(url=uri)
+        #输出日志
+        logger.debug(res.text)
         result = json.loads(res.text)
+
         if(result['status'] == 1):
-            addText(text, "同步IP成功")
+            logger.info("同步IP成功")
             return True
         else:
-            addText(text, "同步IP失败，请联系开发者")
+            logger.war("同步IP失败，请联系开发者")
             return False
     except Exception as err:
-        addText(text, str(err))
-        addText(text, "同步IP出错了，等下再试把")
+        logger.error( str(err))
+        logger.war("同步IP出错了，等下再试把")
         return False
 
 def statusBarCallback():
@@ -124,27 +127,30 @@ def getConfig():
     return cf
 
 def get_account(text):
+    logger = log(text)
+    logger.info("----开始获取学号----")
     try:
         resp = requests.get(config.IP_URL, timeout=10)
-        addText(text, "尝试获取账号中>>>  请求响应码：{}".format(resp.status_code))
-    except:
-        addText(text, "获取学号失败，请在设置中填写学号。")
+        logger.info("尝试获取账号中>>>  请求响应码：{}".format(resp.status_code))
+    except Exception as e:
+        logger.error(str(e))
+        logger.war( "获取学号失败，请在设置中填写学号。")
         return ""
 
-    if resp.status_code != 200 :
-        addText(text, "请求错误，获取学号失败，请检查你的网络")
-        return ""
     try:
         #处理响应结果
         result = resp.text.split('(')
         result = result[1].split(")")
         result = result[0]
+        logger.debug(result)
         res = json.loads(result)
         
         if "uid" in result:
-            addText(text, "获取学号成功，你当前的学号为：{}".format(res['uid']))
+            logger.info( "获取学号成功，你当前的学号为：{}".format(res['uid']))
             return res['uid']
         else:
             return ""
-    except:
+    except Exception as e:
+        logger.error(str(e))
+        logger.war("获取学号失败，请在设置中填写学号。")
         return ""

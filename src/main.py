@@ -9,6 +9,7 @@ import config as c
 import network
 import utils
 import wind
+from log import *
 
 flag = True
 
@@ -98,6 +99,9 @@ statusbar.pack(side=BOTTOM, fill=X)
 config = utils.getConfig()
 list = config.sections()  # 获取到配置文件中所有分组名称
 
+# 日志类
+logger = log(info)
+
 # 取不到配置文件时，先处理硬配置，优先打开子窗口
 if list == []:
         config.add_section("system")
@@ -113,7 +117,9 @@ if list == []:
         if not os.path.exists("config"):
                 os.mkdir("config")
         config.write(open("config\\config.ini", "w"))
-        utils.addText(info,"首次使用，请务必打开设置填写账号密码方可使用")
+        logger.addText("首次使用，请务必打开设置填写账号密码方可使用")
+
+
 
 # 控件绑定
 statusbar.bind("<Button-1>", utils.statusBarCallback)
