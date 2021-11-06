@@ -31,4 +31,4 @@ INDEX_BILIBILI = "https://space.bilibili.com/23161464"
 GET_IP_WAIT_TIME = 10
 
 # 系统常量
-VERSION = '4.0.0'
+VERSION = '4.1.4'

@@ -91,7 +91,7 @@ image_2 = canvas.create_image(820.0,165.0,image=image_image_2)
 
 # 底部状态栏
 statusbar = Label(window, 
-        text="校园网助手V4运行ing......    ver {} 更新内容:集成了路由模式 重构软件UI 优化逻辑体验 \t 作者:氯磷Rolin".format(c.VERSION),
+        text="校园网助手V4运行ing......    ver {} 更新内容:新增 V2日志引擎 优化 UI交互逻辑\t如果无法获取IP请检查杀毒软件或防火墙，开启对应联网权限\t 作者:氯磷Rolin".format(c.VERSION),
         bd=1, relief=SUNKEN, anchor=W)
 statusbar.pack(side=BOTTOM, fill=X)
 
