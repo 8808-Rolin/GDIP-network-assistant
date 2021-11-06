@@ -28,10 +28,12 @@ def addText(text, str):
 # 通过校园网获取IP
 def get_ip(text):
     try:
+        requests.adapters.DEFAULT_RETRIES = 5
         resp = requests.get(config.IP_URL, timeout=10)
+        resp.keep_alive = False
         addText(text, "获取IP中>>>  请求响应码：{}".format(resp.status_code))
-    except:
-        addText(text, "网络错误，获取IP失败，请检查你的网络")
+    except Exception as e:
+        addText(text, "获取IP失败，请检查你的网络")
         return ""
 
     if resp.status_code != 200 :
