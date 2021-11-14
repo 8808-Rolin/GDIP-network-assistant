@@ -22,10 +22,10 @@ class log:
             os.mkdir("config\\log")
     # 生成日志
     _logger = logging.getLogger()
-    _logger.setLevel(logging.NOTSET)
+    _logger.setLevel(logging.INFO)
     _fileHandeler = logging.FileHandler(
         'config\\log\\Log-{}.log'.format(_time_name), mode='w', encoding='UTF-8')
-    _fileHandeler.setLevel(logging.NOTSET)
+    _fileHandeler.setLevel(logging.INFO)
     _formatter = logging.Formatter(
         '[%(asctime)s]:[%(levelname)s]:[%(message)s]')
     _fileHandeler.setFormatter(_formatter)
@@ -45,7 +45,7 @@ class log:
 
     # debug信息 输出日志
     def debug(self, message):
-        self._logger.debug(message)
+        self._logger.info(message)
 
     # info信息，输出日志与屏幕
     def info(self, message):

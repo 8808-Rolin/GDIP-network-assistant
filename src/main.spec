@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['wind.py', 'utils.py', 'network.py', 'config.py'，'log.py', 'D:\\Project\\vscode-workspace\\python\\Gdipcna\\src'],
+             pathex=['wind.py', 'utils.py', 'network.py', 'config.py','log.py', 'D:\\Project\\vscode-workspace\\python\\Gdipcna\\src'],
              binaries=[],
              datas=[('.\\\\assets\\\\*', '.\\\\assets')],
              hiddenimports=[],

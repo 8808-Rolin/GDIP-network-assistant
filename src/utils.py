@@ -16,6 +16,8 @@ import time
 import uuid
 import configparser
 from log import *
+import re
+import network
 
 
 
@@ -100,7 +102,7 @@ def updateIP(account,text):
         s = requests.session()
         s.keep_alive = False  # 关闭多余连接
         uri = config.UPDATE_URL.format(
-            account, ip)
+            account, ip,config.VERSION)
         res = requests.get(url=uri)
         #输出日志
         logger.debug(res.text)
@@ -117,7 +119,7 @@ def updateIP(account,text):
         logger.war("同步IP出错了，等下再试把")
         return False
 
-def statusBarCallback():
+def statusBarCallback(self):
     webbrowser.open_new(config.INDEX_BILIBILI)
 
 
@@ -154,3 +156,62 @@ def get_account(text):
         logger.error(str(e))
         logger.war("获取学号失败，请在设置中填写学号。")
         return ""
+
+
+# Update Status Bar Content Thread
+# 实时更新状态栏内容线程
+def usbct(statusbar,text):
+    logger = log(text)
+    #初始化状态栏
+    #检测当前状态
+    #更新任务栏内容
+
+    while True :
+        sbstr = "校园网助手Ver{}守护你的网络中...... ".format(config.VERSION)
+        try:
+            # 获取登录状态
+            rq1 = requests.get(config.IP_URL,timeout=5)
+            result = rq1.text.split('(')
+            result = result[1].split(")")
+            result = result[0]
+            res = json.loads(result)
+            status = res['result']
+            if status == '' or status == 0:
+                sbstr += '\t 当前还未成功登录校园网，正在登陆校园网......'
+                statusbar['text'] = sbstr
+                #直接进行一个校园网的重连
+                # 引入配置文件
+                # 实例化configParser对象
+                co = configparser.ConfigParser()
+                # read读取ini文件
+                co.read('config\\config.ini', encoding='UTF-8')
+                account = config.get('user', 'account')
+                password = config.get('user', 'password')
+                sleepTime = eval(config.get('system', 'sleepTime'))  # 睡眠时间
+                logger.addText("校园网账号：{}".format(account))
+                logger.addText("重连时间：{}秒".format(sleepTime))
+                network.login(account, password, text)
+                time.sleep(2)
+                continue
+            
+            # 当登陆成功后显示个人信息
+            rq2 = requests.get(timeout=5, url=config.INDEX_LOGIN)
+            lip = re.findall(
+                pattern=config.LAST_LOGIN_IP_PATTERN, string=rq2.text)
+            stime = re.findall(
+                pattern=config.LAST_START_TIME_PATTERN, string=rq2.text)
+            etime = re.findall(
+                pattern=config.LAST_END_TIME_PATTERN, string=rq2.text)
+            NID = re.findall(
+                pattern=config.LAST_NAME_ID_PATTERN, string=rq2.text)
+            
+            sbstr += '\t 上次登录IP：{}，上次登录时间：{}，上次登出时间：{}，用户名称：{}'.format(
+                lip[0], stime[0], etime[0], NID[0])
+            statusbar['text'] = sbstr
+            time.sleep(15)
+        except Exception as e: 
+            for i in range(5,0):
+                sbstr = "校园网助手连接出错  获取信息出错，将在{}秒后进行重试".format(i)
+                statusbar['text'] = sbstr
+                logger.error(str(e))
+            

@@ -2,6 +2,7 @@
 #导入包
 from pathlib import Path
 from tkinter import *
+from tkinter import messagebox
 import os
 import threading
 import webbrowser
@@ -10,6 +11,9 @@ import network
 import utils
 import wind
 from log import *
+import requests
+import re
+import sys
 
 flag = True
 
@@ -25,6 +29,20 @@ window.title('广轻网络助手 Ver {}'.format(c.VERSION))
 window.geometry("960x586")
 window.configure(bg = "#FAFAFD")
 window.iconbitmap(relative_to_assets('favicon.ico'))
+
+
+#判断当前是否校园网环境
+try:
+        requests.get(url=c.INDEX_LOGIN,timeout=1)
+except Exception as e:
+        ex = str(e)
+        if re.search(r'Failed to establish a new connection', ex) != None:
+                messagebox.showwarning(title="警告", message=c.OPEN_WARNING)
+        elif re.search(r'timeout', ex) != None:
+                ru = messagebox.askyesno(title="错误！！！", message=c.OPEN_STOP)
+                if not ru:
+                        sys.exit(1)
+        
 
 # 背景框体绘制
 canvas = Canvas(window,bg = "#FAFAFD",height = 586,width = 960,bd = 0,highlightthickness = 0,relief = "ridge")
@@ -91,8 +109,8 @@ image_2 = canvas.create_image(820.0,165.0,image=image_image_2)
 
 # 底部状态栏
 statusbar = Label(window, 
-        text="校园网助手V4运行ing......    ver {} 更新内容:新增 V2日志引擎 优化 UI交互逻辑\t如果无法获取IP请检查杀毒软件或防火墙，开启对应联网权限\t 作者:氯磷Rolin".format(c.VERSION),
-        bd=1, relief=SUNKEN, anchor=W)
+        text="校园网助手Ver{}初始化中...... ".format(c.VERSION),
+        bd=1,bg='yellow', relief=SUNKEN, anchor=W)
 statusbar.pack(side=BOTTOM, fill=X)
 
 # ----业务代码----
@@ -107,7 +125,7 @@ logger = log(info)
 # 取不到配置文件时，先处理硬配置，优先打开子窗口
 if list == []:
         config.add_section("system")
-        config.set("system", "sleepTime", '12')
+        config.set("system", "sleepTime", '10')
         config.add_section("user")
         num = utils.get_account(info)
         if(num == ''):
@@ -126,13 +144,21 @@ if list == []:
 # 控件绑定
 statusbar.bind("<Button-1>", utils.statusBarCallback)
 
-# 脚本运行线程
+# 主脚本运行线程
 t1 = threading.Thread(target=network.scriptRun, args=(info, statusbar,))
 if __name__ == '__main__' and flag:
         stop_threads = False
         t1.setName('script')
         t1.setDaemon(True)
         t1.start()
+        
+        
+t2 = threading.Thread(target=utils.usbct, args=(statusbar,info,))
+if __name__ == '__main__' and flag:
+        stop_threads = False
+        t2.setName('script')
+        t2.setDaemon(True)
+        t2.start()
 
 # 线程常驻
 window.resizable(False, False)
