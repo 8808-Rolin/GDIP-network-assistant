@@ -11,10 +11,10 @@ import random
 import time
 import tkinter as tk
 
+
 class log:
     # 日志名称生成
     _time_name = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
-
 
     if not os.path.exists("config"):
         os.mkdir("config")
@@ -23,22 +23,22 @@ class log:
     # 生成日志
     _logger = logging.getLogger()
     _logger.setLevel(logging.INFO)
-    _fileHandeler = logging.FileHandler(
+    _fileHandler = logging.FileHandler(
         'config\\log\\Log-{}.log'.format(_time_name), mode='w', encoding='UTF-8')
-    _fileHandeler.setLevel(logging.INFO)
+    _fileHandler.setLevel(logging.INFO)
     _formatter = logging.Formatter(
         '[%(asctime)s]:[%(levelname)s]:[%(message)s]')
-    _fileHandeler.setFormatter(_formatter)
-    _logger.addHandler(_fileHandeler)
+    _fileHandler.setFormatter(_formatter)
+    _logger.addHandler(_fileHandler)
 
     text = None
 
-    def __init__(self,text):
+    def __init__(self, text):
         self.text = text
-    
+
     def addText(self, message):
         localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        message = localtime+"->"+message + "\n"
+        message = localtime + "->" + message + "\n"
         self.text.configure(state='normal')
         self.text.insert(tk.END, message)
         self.text.configure(state='disabled')
@@ -56,18 +56,15 @@ class log:
     def war(self, message):
         self._logger.warn(message)
         self.addText(message)
-    
-    #error 信息，输出日志
+
+    # error 信息，输出日志
     def error(self, message):
         self._logger.error(message)
 
     # cri信息 输出日志
     def cri(self, message):
         self._logger.critical(message)
-    
-    #show 信息，仅展示到屏幕
-    def show(self,message):
+
+    # show 信息，仅展示到屏幕
+    def show(self, message):
         self.addText(message)
-
-    
-

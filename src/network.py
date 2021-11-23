@@ -18,21 +18,20 @@ from subprocess import PIPE, run
 from log import *
 
 
-
 # 登陆校园网
-def login(account,password,text):
+def login(account, password, text):
     logger = log(text)
-    #获取ip
+    # 获取ip
     ip = utils.get_true_ip(text)
 
-    param = cf.buildParam(account,password,ip)
+    param = cf.buildParam(account, password, ip)
     logger.info("当前校园网账号>>> {}".format(account))
-    logger.info( "当前校园网IP>>> {}".format(ip))
+    logger.info("当前校园网IP>>> {}".format(ip))
     logger.info("当前校园网IP>>> {}".format(ip))
     # 发送请求
     try:
         rq = requests.get(cf.LOGIN_URL, params=param, timeout=10)
-        logger.info( "请求结果>>>  请求响应码：{}".format(rq.status_code))
+        logger.info("请求结果>>>  请求响应码：{}".format(rq.status_code))
 
         # 处理响应数据
         result = rq.text.split('(')
@@ -43,17 +42,17 @@ def login(account,password,text):
         # 日志打印JSON结果
         logger.debug(result)
 
-        if("ret_code" in result):
+        if "ret_code" in result:
             ret_code = json.loads(result)["ret_code"]
         else:
             ret_code = -1
 
         # 结果判定
         if res['result'] == "1":
-            logger.info( ">>>{}".format(res['msg']))
+            logger.info(">>>{}".format(res['msg']))
             return True
         elif res['result'] == "0" and ret_code == 2:
-            logger.info( ">>>您已经成功登录,无需再次登录")
+            logger.info(">>>您已经成功登录,无需再次登录")
             return True
         elif res['result'] == "0" and ret_code == 1:
             msg = base64.b64decode(res['msg'].encode()).decode
@@ -61,30 +60,27 @@ def login(account,password,text):
             return False
         else:
             msg = res['msg']
-            logger.war( "错误信息>>>{}".format(result))
-            logger.war( ">>>{}".format(msg))
+            logger.war("错误信息>>>{}".format(result))
+            logger.war(">>>{}".format(msg))
             return False
     except Exception as e:
         log.war("登录错误！，详细信息请查看日志文件")
         log.error(str(e))
         return False
 
-    
-
 
 # 脚本运行
-def scriptRun(text,sb):
+def scriptRun(text, sb):
     logger = log(text)
-    logger.info( '----脚本开始运行----')
+    logger.info('----脚本开始运行----')
     logger.addText(
-        'Welcom To Use GDIP Network Assistant Version {}  For Windows'.format(cf.VERSION))
+        'Welcome To Use GDIP Network Assistant Version {}  For Windows'.format(cf.VERSION))
 
     # 引入配置文件
     # 实例化configParser对象
     config = configparser.ConfigParser()
     # read读取ini文件
     config.read('config\\config.ini', encoding='UTF-8')
-    
 
     # 用户参数
     account = config.get('user', 'account')
@@ -96,16 +92,16 @@ def scriptRun(text,sb):
     logger.addText("重连时间：{}秒".format(sleepTime))
 
     # 连接校园网
-    cnt = 1 #重连次数
-    testnum = 0 
-        # 判断当前是否网络正常
+    cnt = 1  # 重连次数
+    testnum = 0
+    # 判断当前是否网络正常
     while True:
         r = run('ping 114.114.114.114',
                 stdout=PIPE,
                 stderr=PIPE,
                 stdin=PIPE,
                 shell=True)
-                
+
         # 没有网络时
         if r.returncode:
             sb['bg'] = "red"
@@ -119,7 +115,7 @@ def scriptRun(text,sb):
             sleepTime = eval(config.get('system', 'sleepTime'))  # 睡眠时间
 
             try:
-                if login(account, password, text) :
+                if login(account, password, text):
                     testnum = 0
                     cnt += 1
                     continue
@@ -130,7 +126,7 @@ def scriptRun(text,sb):
                     time.sleep(sleepTime)
                     continue
             except Exception as e:
-                logger.war( "重连错误！！！，将在{}秒后重连,详细错误请查看日志".format(sleepTime))
+                logger.war("重连错误！！！，将在{}秒后重连,详细错误请查看日志".format(sleepTime))
                 logger.error(str(e))
                 time.sleep(sleepTime)
                 testnum = 0
@@ -141,7 +137,7 @@ def scriptRun(text,sb):
             if (testnum % 120) == 0:
                 logger.info('当前网络状态正常')
                 # 更新网站上的ip
-                utils.updateIP(account,text)
+                utils.updateIP(account, text)
             testnum += 1
         # 定时心跳
         time.sleep(sleepTime)

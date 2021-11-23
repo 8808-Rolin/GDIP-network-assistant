@@ -10,14 +10,16 @@ IP_URL = "http://10.0.0.37/drcom/chkstatus?callback=dr1002"
 
 # 登录校园网部分参数
 LOGIN_URL = "http://10.0.0.37:801/eportal/"
-def buildParam(account,password,ip):
+
+
+def buildParam(account, password, ip):
     body = {
         'c': 'Portal',
         'a': 'login',
         'login_method': '1',
         'user_account': ',0,{}'.format(account),
         'user_password': password,
-        'wlan_user_ip':  ip
+        'wlan_user_ip': ip
     }
     return body
 
