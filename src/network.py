@@ -1,20 +1,16 @@
-'''
+"""
 Description: Rolin's code edit
 Author: Rolin-Code
 Date: 2021-11-05 01:02:07
 LastEditors: Rolin
 Code-Function-What do you want to do: 网络相关方法
-'''
+"""
 
-from typing import Text
-import utils
-import config as cf
-import time
-import requests
-import json
 import base64
-import configparser
 from subprocess import PIPE, run
+
+import config as cf
+import utils
 from log import *
 
 
@@ -30,20 +26,13 @@ def login(account, password, text):
     logger.info("当前校园网IP>>> {}".format(ip))
     # 发送请求
     try:
-        rq = requests.get(cf.LOGIN_URL, params=param, timeout=10)
-        logger.info("请求结果>>>  请求响应码：{}".format(rq.status_code))
 
-        # 处理响应数据
-        result = rq.text.split('(')
-        result = result[1].split(")")
-        result = result[0]
-        res = json.loads(result)
-
+        res = utils.url2json(cf.LOGIN_URL,timeout=10,param=param,text=text)
         # 日志打印JSON结果
-        logger.debug(result)
+        logger.debug(res)
 
-        if "ret_code" in result:
-            ret_code = json.loads(result)["ret_code"]
+        if "ret_code" in res:
+            ret_code = res["ret_code"]
         else:
             ret_code = -1
 
@@ -76,20 +65,13 @@ def scriptRun(text, sb):
     logger.addText(
         'Welcome To Use GDIP Network Assistant Version {}  For Windows'.format(cf.VERSION))
 
-    # 引入配置文件
-    # 实例化configParser对象
-    config = configparser.ConfigParser()
-    # read读取ini文件
-    config.read('config\\config.ini', encoding='UTF-8')
-
+    config = utils.getConfig()
     # 用户参数
     account = config.get('user', 'account')
-    password = config.get('user', 'password')
-    sleepTime = eval(config.get('system', 'sleepTime'))  # 睡眠时间
-
+    sleep_time = eval(config.get('system', 'sleepTime'))  # 睡眠时间
     # 提示信息
     logger.addText("校园网账号：{}".format(account))
-    logger.addText("重连时间：{}秒".format(sleepTime))
+    logger.addText("重连时间：{}秒".format(sleep_time))
 
     # 连接校园网
     cnt = 1  # 重连次数
@@ -112,7 +94,7 @@ def scriptRun(text, sb):
             config.read('config\\config.ini', encoding='UTF-8')
             account = config.get('user', 'account')
             password = config.get('user', 'password')
-            sleepTime = eval(config.get('system', 'sleepTime'))  # 睡眠时间
+            sleep_time = eval(config.get('system', 'sleepTime'))  # 睡眠时间
 
             try:
                 if login(account, password, text):
@@ -120,15 +102,15 @@ def scriptRun(text, sb):
                     cnt += 1
                     continue
                 else:
-                    logger.war("重连错误！！！，将在{}秒后重连".format(sleepTime))
+                    logger.war("重连错误！！！，将在{}秒后重连".format(sleep_time))
                     testnum = 0
                     cnt += 1
-                    time.sleep(sleepTime)
+                    time.sleep(sleep_time)
                     continue
             except Exception as e:
-                logger.war("重连错误！！！，将在{}秒后重连,详细错误请查看日志".format(sleepTime))
+                logger.war("重连错误！！！，将在{}秒后重连,详细错误请查看日志".format(sleep_time))
                 logger.error(str(e))
-                time.sleep(sleepTime)
+                time.sleep(sleep_time)
                 testnum = 0
                 cnt += 1
                 continue
@@ -140,13 +122,11 @@ def scriptRun(text, sb):
                 utils.updateIP(account, text)
             testnum += 1
         # 定时心跳
-        time.sleep(sleepTime)
+        time.sleep(sleep_time)
 
 
 def linkNet(text):
-    config = configparser.ConfigParser()
-    config.read('config\\config.ini', encoding='UTF-8')
+    config = utils.getConfig()
     account = config.get('user', 'account')
     password = config.get('user', 'password')
-
     login(account, password, text)

@@ -2,7 +2,6 @@
 from pathlib import Path
 from tkinter import *
 from tkinter import messagebox
-import os
 import threading
 import webbrowser
 import config as c

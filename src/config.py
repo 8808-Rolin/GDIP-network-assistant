@@ -34,7 +34,7 @@ INDEX_LOGIN = "http://10.0.0.37/"
 GET_IP_WAIT_TIME = 10
 
 # 系统常量
-VERSION = '4.2.0'
+VERSION = '4.5.0'
 
 # 正则表达式
 LAST_LOGIN_IP_PATTERN = r'lip=\'(.*?)\';'
