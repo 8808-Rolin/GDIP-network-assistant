@@ -14,14 +14,22 @@ import re
 import sys
 
 flag = True
+isFirst = False
+in_school = True
 
 # 资源引入
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+THEMES_PATH = Path("{}/{}".format(os.path.abspath('.'),"config\\themes"))
 
 
 def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+    pa = THEMES_PATH / Path(path)
+    if pa.exists():
+        return pa
+    else:
+        return ASSETS_PATH / Path(path)
+
 
 
 # 创建框体
@@ -36,6 +44,7 @@ try:
     requests.get(url=c.INDEX_LOGIN, timeout=1)
 except Exception as e:
     ex = str(e)
+    in_school = False
     if re.search(r'Failed to establish a new connection', ex) is not None:
         messagebox.showwarning(title="警告", message=c.OPEN_WARNING)
     elif re.search(r'timeout', ex) is not None:
@@ -50,7 +59,7 @@ canvas.place(x=0, y=0)
 # 日志框绘制
 entryBar_image = PhotoImage(file=relative_to_assets("entry_1.png"))
 entryBar = canvas.create_image(350.0, 318.0, image=entryBar_image)
-info = Text(bd=0, bg="#002038", highlightthickness=0, fg='white', state=DISABLED)
+info = Text(bd=0, bg="#002038", highlightthickness=0, fg='#FFFFFF', state=DISABLED)
 info.place(x=30.0, y=104.0, width=640.0, height=431.0)
 
 # 顶部图片
@@ -123,39 +132,70 @@ logger = log(info)
 
 # 取不到配置文件时，先处理硬配置，优先打开子窗口
 if not list:
-    config.add_section("system")
-    config.set("system", "sleepTime", '10')
-    config.add_section("user")
-    num = utils.get_account(info)
-    if num == '':
-        config.set("user", "account", "2019060703300")
-    else:
-        config.set("user", "account", num)
-
-    config.set("user", "password", "0000000000")
     if not os.path.exists("config"):
         os.mkdir("config")
-    config.write(open("config\\config.ini", "w"))
     logger.addText("首次使用，请务必打开设置填写账号密码方可使用")
+    isFirst = True
+else: # 存在配置文件，判断每一项是否存在，不存在则填充
+    if not config.has_section("theme"):
+        config.add_section("theme")
+
+    if not config.has_section("system"):
+        config.add_section('system')
+
+    if not config.has_section("user"):
+        config.add_section('user')
+
+    if not config.has_option("user","account"):
+        num = utils.get_account(info)
+        if num == '':
+            config.set("user", "account", "2019060703300")
+        else:
+            config.set("user", "account", num)
+
+    if not config.has_option("user","password"):
+        config.set("user", "password", "0000000000")
+
+    if not config.has_option("system","sleepTime"):
+        config.set("system", "sleepTime", '10')
+
+    config.set("system", "lastUseTime",time.strftime("%Y 年 %m 月 %d 日 %H:%M:%S", time.localtime()))
+
+    if not config.has_option("theme","日志框背景颜色"):
+        config.set("theme", "日志框背景颜色", '#002038')
+    if not config.has_option("theme","日志框文字颜色"):
+        config.set("theme", "日志框文字颜色", '#FFFFFF')
+    if not config.has_option("theme", "软件背景颜色"):
+        config.set("theme", "软件背景颜色", '#FAFAFD')
+
+config.write(open("config\\config.ini", "w",encoding='UTF-8'))
+
+# 根据配置修改控件颜色
+info['bg'] = config.get('theme','日志框背景颜色')
+info['fg'] = config.get('theme','日志框文字颜色')
+canvas['bg'] = config.get("theme", "软件背景颜色")
 
 # 控件绑定
 statusbar.bind("<Button-1>", utils.statusBarCallback)
 
 # 主脚本运行线程
 t1 = threading.Thread(target=network.scriptRun, args=(info, statusbar,))
-if __name__ == '__main__' and flag:
-    stop_threads = False
-    t1.setName('script')
-    t1.setDaemon(True)
-    t1.start()
-
 t2 = threading.Thread(target=utils.usbct, args=(statusbar, info,))
 if __name__ == '__main__' and flag:
-    stop_threads = False
-    t2.setName('script')
-    t2.setDaemon(True)
-    t2.start()
+        stop_threads = False
+        t1.daemon = True
+        t1.name = 'script'
+        t1.start()
+
+        t2.daemon = True
+        t2.name = 'statusbar'
+        t2.start()
+
 
 # 线程常驻
 window.resizable(False, False)
+# 如果没有配置则打开配置选项
+if isFirst:
+    wind.configWindow(window, info)
+    isFirst = False
 window.mainloop()

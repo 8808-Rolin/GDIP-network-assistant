@@ -7,6 +7,7 @@ Code-Function-What do you want to do: 工具方法
 '''
 import configparser
 import json
+import time
 import uuid
 import webbrowser
 from subprocess import PIPE, run
@@ -130,7 +131,7 @@ def getConfig():
 
 def get_account(text):
     logger = log(text)
-    logger.info("----开始获取学号----")
+    logger.info("---自动获取学号----")
     try:
         resp = requests.get(config.IP_URL, timeout=10)
         logger.info("尝试获取账号中>>>  请求响应码：{}".format(resp.status_code))
@@ -160,25 +161,15 @@ def usbct(statusbar, text):
     # 初始化状态栏
     # 检测当前状态
     # 更新任务栏内容
-
     while True:
         sbstr = "校园网助手Ver{}守护你的网络中...... ".format(config.VERSION)
         try:
             # 获取登录状态
-            res = url2json(config.IP_URL, text=text)
-            status = res['result']
-            if status == '' or status == 0:
+            status = isLoin(text)
+            if not status:
                 sbstr += '\t 当前还未成功登录校园网，正在登陆校园网......'
                 statusbar['text'] = sbstr
-                # 直接进行一个校园网的重连
-                co = getConfig()
-                account = co.get('user', 'account')
-                password = co.get('user', 'password')
-                sleep_time = eval(co.get('system', 'sleepTime'))  # 睡眠时间
-                logger.addText("校园网账号：{}".format(account))
-                logger.addText("重连时间：{}秒".format(sleep_time))
-                network.login(account, password, text)
-                time.sleep(2)
+                time.sleep(1.5)
                 continue
             # 当登陆成功后显示个人信息
             rq2 = requests.get(timeout=5, url=config.INDEX_LOGIN)
@@ -193,20 +184,25 @@ def usbct(statusbar, text):
 
             sbstr += '\t 上次登录IP：{}，上次登录时间：{}，上次登出时间：{}，用户名称：{}'.format(
                 lip[0], stime[0], etime[0], NID[0])
-
+            statusbar['bg'] = 'green'
             statusbar['text'] = sbstr
             time.sleep(15)
         except Exception as e:
             logger.war(str(e))
+            statusbar['bg'] = 'red'
             for i in range(5, 0):
-                sbstr = "校园网助手连接出错  获取信息出错，将在{}秒后进行重试".format(i)
+                sbstr = "校园网助手连接出错,将在{}秒后进行重试".format(i)
                 statusbar['text'] = sbstr
+                time.sleep(1)
 
 
-# TODO(Rolin): 通过校园网抓包可获取用户当前登陆状态
-def dr1002(text):
-    resp = requests.get(config.IP_URL, timeout=10)
-    return True
+# 通过校园网抓包可获取用户当前登陆状态
+def isLoin(text):
+    try:
+        resp_json = url2json(config.IP_URL, text)
+        return resp_json['result'] == 1
+    except Exception as e:
+        return False
 
 
 # 将常见的url请求结果去掉括号后生成一个json
@@ -216,7 +212,7 @@ def url2json(url, text, timeout=5, param=None):
         param = {}
     logger = log(text)
     rq1 = requests.get(url, params=param, timeout=timeout)
-    logger.info("请求结果>>>  请求响应码：{}".format(rq1.status_code))
+    logger.debug("请求结果>>>  请求响应码：{}".format(rq1.status_code))
     result = rq1.text.split('(')
     result = result[1].split(")")
     result = result[0]

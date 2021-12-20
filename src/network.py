@@ -49,7 +49,7 @@ def login(account, password, text):
             return False
         else:
             msg = res['msg']
-            logger.war("错误信息>>>{}".format(result))
+            logger.war("错误信息>>>{}".format(res))
             logger.war(">>>{}".format(msg))
             return False
     except Exception as e:
@@ -76,18 +76,12 @@ def scriptRun(text, sb):
     # 连接校园网
     cnt = 1  # 重连次数
     testnum = 0
-    # 判断当前是否网络正常
+    # 判断当前是否网络正常，才是校验登录的方式
     while True:
-        r = run('ping 114.114.114.114',
-                stdout=PIPE,
-                stderr=PIPE,
-                stdin=PIPE,
-                shell=True)
-
+        is_login = utils.isLoin(text)
         # 没有网络时
-        if r.returncode:
+        if not is_login:
             sb['bg'] = "red"
-
             logger.war(
                 '校园网已断开，正在重连 第{0}次'.format(cnt))
 

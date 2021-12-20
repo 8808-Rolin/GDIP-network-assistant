@@ -7,7 +7,6 @@ Code-Function-What do you want to do: logging 工具类
 '''
 import logging
 import os
-import random
 import time
 import tkinter as tk
 
