@@ -113,7 +113,7 @@ def configWindow(root, text):
         config.set("user", "account", acc)
         config.set("user", "password", pwd)
         try:
-            config.write(open("config\\config.ini", "r+"))
+            config.write(open("config\\config.ini", "r+",encoding='UTF-8'))
             logger.info("---更新设置成功  当前设置如下---")
             logger.info("校园网账号：{}".format(acc))
             logger.debug("校园网密码：{}".format(pwd))
