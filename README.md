@@ -5,7 +5,9 @@
  * @LastEditors: Rolin
  * @Code-Function-What do you want to do: 
 -->
+
 ## Gdipcna
+
 # GDIP Campus Network Assistant
 
 <p align="center">
@@ -13,14 +15,14 @@
   <h5 align="center" style="margin: 0 auto 0 auto;">GDIP Campus Network Assistant</h5>
   </p>
 
-  <p align="center">
+<p align="center">
     <img src="https://img.shields.io/github/last-commit/8808-Rolin/GDIP-network-assistant">
     <img src="https://img.shields.io/github/contributors/8808-Rolin/GDIP-network-assistant">
     <img src="https://img.shields.io/github/issues/8808-Rolin/GDIP-network-assistant?label=issues">
     <img src="https://img.shields.io/github/stars/8808-Rolin/GDIP-network-assistant">
   </p>
 
-  <br>
+<br>
 
 - [GDIP Campus Network Assistant](#gdip-campus-network-assistant)
 - [Developers Information](#developers-information)
@@ -35,18 +37,27 @@
 - [Code-Usage](#code-usage)
 
 # Developers Information
+
 [Developer's Bilibili](https://space.bilibili.com/23161464)
 
 Proposer:
+
 - 星淡
 - 30202的大家
-# Update-History
-## Version 1.0
+  
+  ## Github 仓库地址：
+  
+  [GitHub - 8808-Rolin/GDIP-network-assistant: 广轻校园网助手Python版源码](https://github.com/8808-Rolin/GDIP-network-assistant)
+  
+  # Update-History
+  
+  ## Version 1.0
 - Ver 1.0 初版软件推出
 - Ver 1.1 新增 Linux版本
 - Ver 1.2 新增 账号密码，增强适配性
 - Ver 1.3 新增 配置文件管理，更加方便的使用校园网
-## Version 2.0
+  
+  ## Version 2.0
 - Ver 2.0 新增 图形界面GUI ，使得操作更加便捷与人性化,开机即连 无人值守，Linux版本和桌面版本分开开发
 - Ver 2.0.1 修复 移动状态下IP仍旧不变的问题(路由模式->直连模式)
 - Ver 2.1 优化 用户体验；优化 直连模式和路由模式兼容 路由模式和直连不再做模式区分；修复 一些已知的BUG
@@ -58,13 +69,15 @@ Proposer:
 - ver 2.5.7 优化 每次打开软件时都将检测新版本更新
 - ver 2.5.8 优化 修复一些BUG
 - ver 2.5.9 优化 自动更新的bug 添加了更多的线程
-## Version 3.0
+  
+  ## Version 3.0
 - Ver 3.0 修复断网异常，增加更多鲁棒性，采用单文件形式，不再解压安装
 - Ver 3.2 修复更多异常 提高使用稳定性
 - Ver 3.4 提高稳定性，修复异常，在网络波动时更加智能
 - Ver 3.7 财力不足，放弃了自动更新模块（实在没钱续费啦）
 - Ver 3.8 提高稳定性，修复更多异常，就是机房暂时炸了也不影响软件正常使用
-## Version 4.0 
+  
+  ## Version 4.0
 - Ver 4.0 船新改版上线
   - 新增 集成路由模式，跨路由也可以使用该助手维持在线状态
   - 新增 用户IP实时上传云端，随时可以通过Web查找当前IP
@@ -93,19 +106,23 @@ Proposer:
   - 优化 配置文件生成逻辑，兼容老版本直接无缝切换
 
 # Usage
+
 - 使用场景：广东轻工职业技术学院校园网
 - 能且仅能在校园网环境下正常工作
-## 具体使用方法
+  
+  ## 具体使用方法
 - 第一次使用时需要设置校园网账号密码，随后该账号密码会被记录，以后再打开软件将会自动读取配置文件进行登录
 - 请务必确保账号密码的正确性
 - 该软件完成了掉线自动登录功能，7x24小时无人值守
 - 加入自启动后能实现开机即连功能，开机即连
-## 加入开机自启动
+  
+  ## 加入开机自启动
 1. Win+R 打开运行窗口
 2. 输入 `shell:startup` 打开启动项文件资源管理器
 3. 将本软件的**快捷方式**复制到文件夹下即可
 
 ## 自定义主题教程
+
 1. 运行本软件，会自动生成config目录
 2. 在config目录下新建文件夹`themes`
 3. 参考主题案例，使用同名同尺寸的图片替换
@@ -113,5 +130,6 @@ Proposer:
 5. 重启软件完成修改
 
 # Code-Usage
+
 - pyinstaller编译教程：
-编译命令：pyinstaller -F -w -i ./assets/favicon.ico main.py -p wind.py -p utils.py -p network.py -p config.py --add-data ".\\assets\\*;.\\assets"
+  编译命令：pyinstaller -F -w -i ./assets/favicon.ico main.py -p wind.py -p utils.py -p network.py -p config.py --add-data ".\\assets\\*;.\\assets"

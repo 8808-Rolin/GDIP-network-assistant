@@ -136,40 +136,40 @@ if not list:
         os.mkdir("config")
     logger.addText("首次使用，请务必打开设置填写账号密码方可使用")
     isFirst = True
-else: # 存在配置文件，判断每一项是否存在，不存在则填充
-    if not config.has_section("theme"):
-        config.add_section("theme")
+# 存在配置文件，判断每一项是否存在，不存在则填充
+if not config.has_section("theme"):
+    config.add_section("theme")
 
-    if not config.has_section("system"):
-        config.add_section('system')
+if not config.has_section("system"):
+    config.add_section('system')
 
-    if not config.has_section("user"):
-        config.add_section('user')
+if not config.has_section("user"):
+    config.add_section('user')
 
-    if not config.has_option("user","account"):
-        num = utils.get_account(info)
-        if num == '':
-            config.set("user", "account", "2019060703300")
-        else:
-            config.set("user", "account", num)
+if not config.has_option("user","account"):
+    num = utils.get_account(info)
+    if num == '':
+        config.set("user", "account", "2019060703300")
+    else:
+        config.set("user", "account", num)
 
-    if not config.has_option("user","password"):
-        config.set("user", "password", "0000000000")
+if not config.has_option("user","password"):
+    config.set("user", "password", "0000000000")
 
-    if not config.has_option("system","sleepTime"):
-        config.set("system", "sleepTime", '10')
+if not config.has_option("system","sleepTime"):
+    config.set("system", "sleepTime", '10')
 
-    config.set("system", "lastUseTime",time.strftime("%Y 年 %m 月 %d 日 %H:%M:%S", time.localtime()))
+config.set("system", "lastUseTime",time.strftime("%Y 年 %m 月 %d 日 %H:%M:%S", time.localtime()))
 
-    if not config.has_option("theme","日志框背景颜色"):
-        config.set("theme", "日志框背景颜色", '#002038')
-    if not config.has_option("theme","日志框文字颜色"):
-        config.set("theme", "日志框文字颜色", '#FFFFFF')
-    if not config.has_option("theme", "软件背景颜色"):
-        config.set("theme", "软件背景颜色", '#FAFAFD')
+if not config.has_option("theme","日志框背景颜色"):
+    config.set("theme", "日志框背景颜色", '#002038')
+if not config.has_option("theme","日志框文字颜色"):
+    config.set("theme", "日志框文字颜色", '#FFFFFF')
+if not config.has_option("theme", "软件背景颜色"):
+    config.set("theme", "软件背景颜色", '#FAFAFD')
 
 config.write(open("config\\config.ini", "w",encoding='UTF-8'))
-
+config = utils.getConfig()
 # 根据配置修改控件颜色
 info['bg'] = config.get('theme','日志框背景颜色')
 info['fg'] = config.get('theme','日志框文字颜色')
