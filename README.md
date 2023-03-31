@@ -5,6 +5,9 @@
  * @LastEditors: Rolin
  * @Code-Function-What do you want to do: 
 -->
+## 写在前面
+毕业了，应该就不更新了，也没法更新了
+
 ## Gdipcna
 # GDIP Campus Network Assistant
 
